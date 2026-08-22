@@ -19,7 +19,7 @@ public class PlacesService {
                 .build();
     }
 
-    public JsonNode searchPlaces(String query){
+    public String searchPlaces(String query){
         String body= """
                 {
                     "textQuery": "%s"
@@ -35,7 +35,7 @@ public class PlacesService {
                 .header("Content-Type","application/json")
                 .body(body)
                 .retrieve()
-                .body(JsonNode.class);
+                .body(String.class);
     }
 
 }
