@@ -42,6 +42,8 @@ public class PlacesService {
 
         System.out.println("Google response from Cloud Run: " + response);
         System.out.println("API key length: " + apikey.length());
+        System.out.println("Query: [" + query + "]");
+        System.out.println("Request body: [" + body + "]");
 
         return response;
     }
