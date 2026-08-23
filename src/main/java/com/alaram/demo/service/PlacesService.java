@@ -1,7 +1,6 @@
 package com.alaram.demo.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.JsonNode;
@@ -20,32 +19,32 @@ public class PlacesService {
                 .build();
     }
 
-    public String searchPlaces(String query) {
+    public JsonNode searchPlaces(String query, double lat, double lon){
         String body = """
             {
-                "textQuery": "%s"
+                "textQuery": "%s",
+                "locationBias": {
+                    "circle": {
+                        "center": {
+                            "latitude": %f,
+                            "longitude": %f
+                        },
+                        "radius": 5000.0
+                    }
+                }
             }
-            """.formatted(query);
+            """.formatted(query, lat, lon);
 
-        String response = restClient.post()
+        return restClient.post()
                 .uri("/v1/places:searchText")
                 .header("X-Goog-Api-Key", apikey)
-                .header(
-                        "X-Goog-FieldMask",
+                .header("X-Goog-FieldMask",
                         "places.id,places.displayName,places.formattedAddress,places.location"
                 )
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
+                .header("Content-Type","application/json")
                 .body(body)
                 .retrieve()
-                .body(String.class);
-
-        System.out.println("Google response from Cloud Run: " + response);
-        System.out.println("API key length: " + apikey.length());
-        System.out.println("Query: [" + query + "]");
-        System.out.println("Request body: [" + body + "]");
-
-        return response;
+                .body(JsonNode.class);
     }
 
 }
