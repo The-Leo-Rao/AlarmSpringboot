@@ -19,7 +19,7 @@ public class PlacesController {
 
     @GetMapping("/search")
     public JsonNode searchPlaces(@RequestParam("query") String query,@RequestParam("lat") double lat,@RequestParam("lon") double lon){
-        return placesService.searchPlaces(query,lat, lon);
+        return placesService.searchPlaces(query,lat,lon);
     }
 
 }
