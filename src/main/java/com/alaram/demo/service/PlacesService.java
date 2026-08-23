@@ -1,6 +1,7 @@
 package com.alaram.demo.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.JsonNode;
@@ -19,23 +20,30 @@ public class PlacesService {
                 .build();
     }
 
-    public String searchPlaces(String query){
-        String body= """
-                {
-                    "textQuery": "%s"
-                }
-                """.formatted(query);
+    public String searchPlaces(String query) {
+        String body = """
+            {
+                "textQuery": "%s"
+            }
+            """.formatted(query);
 
-        return restClient.post()
+        String response = restClient.post()
                 .uri("/v1/places:searchText")
                 .header("X-Goog-Api-Key", apikey)
-                .header("X-Goog-FieldMask",
+                .header(
+                        "X-Goog-FieldMask",
                         "places.id,places.displayName,places.formattedAddress,places.location"
                 )
-                .header("Content-Type","application/json")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .body(body)
                 .retrieve()
                 .body(String.class);
+
+        System.out.println("Google response from Cloud Run: " + response);
+        System.out.println("API key length: " + apikey.length());
+
+        return response;
     }
 
 }
